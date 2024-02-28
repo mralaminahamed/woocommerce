@@ -201,11 +201,10 @@ test.describe( 'Variations tab', () => {
 				.getByRole( 'button', { name: 'Pricing' } )
 				.click();
 
-			const regularPrice = await page
-				.locator(
-					'[id^="wp-block-woocommerce-product-regular-price-field"]'
-				)
-				.waitFor( { state: 'attached' } );
+			const regularPrice = page.locator(
+				'[id^="wp-block-woocommerce-product-regular-price-field"]'
+			);
+			await regularPrice.waitFor( { state: 'attached' } );
 			await regularPrice.first().fill( '100' );
 
 			await page
