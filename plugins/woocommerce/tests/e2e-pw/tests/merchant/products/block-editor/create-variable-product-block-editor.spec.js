@@ -190,20 +190,11 @@ test.describe( 'Variations tab', () => {
 				.click();
 
 			await page
-				.locator(
-					'[data-template-block-id="product-variation-note"] .components-summary-control'
-				)
-				.last()
-				.fill( 'Variation note' );
-
-			await page
 				.locator( '.woocommerce-product-tabs' )
 				.getByRole( 'button', { name: 'Pricing' } )
 				.click();
 
-			const regularPrice = page.locator(
-				'[id^="wp-block-woocommerce-product-regular-price-field"]'
-			);
+			const regularPrice = page.locator( 'input[name="regular_price"]' );
 			await regularPrice.waitFor( { state: 'attached' } );
 			await regularPrice.first().fill( '100' );
 
