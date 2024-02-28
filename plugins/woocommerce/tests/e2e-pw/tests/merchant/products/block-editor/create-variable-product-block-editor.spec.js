@@ -1,8 +1,9 @@
 /* eslint-disable playwright/no-conditional-in-test */
-const { test } = require( './block-editor-fixtures' );
+const { test } = require( '../../../../fixtures/block-editor-fixtures' );
 const { expect } = require( '@playwright/test' );
 
 const { clickOnTab } = require( '../../../../utils/simple-products' );
+const { toggleProductVariationTour } = require( '../../../../utils/tours' );
 
 const NEW_EDITOR_ADD_PRODUCT_URL =
 	'wp-admin/admin.php?page=wc-admin&path=%2Fadd-product&tab=variations';
@@ -21,6 +22,10 @@ const attributesData = {
 
 test.describe( 'Variations tab', () => {
 	test.describe( 'Create variable product', () => {
+		test.use( { storageState: process.env.ADMINSTATE } );
+		test.beforeAll( async ( { request } ) => {
+			await toggleProductVariationTour( request, false );
+		} );
 		test.skip(
 			isTrackingSupposedToBeEnabled,
 			'The block product editor is not being tested'
@@ -40,14 +45,6 @@ test.describe( 'Variations tab', () => {
 				)
 				.last()
 				.fill( productData.summary );
-
-			try {
-				await page
-					.getByLabel( 'Close Tour' )
-					.click( { timeout: 3000 } );
-			} catch ( e ) {
-				console.log( 'Tour was not visible, skipping.' );
-			}
 
 			await clickOnTab( 'Variations', page );
 			await page
