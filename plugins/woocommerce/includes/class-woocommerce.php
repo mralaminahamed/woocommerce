@@ -35,18 +35,34 @@ use Automattic\WooCommerce\Admin\Features\Features;
  * Main WooCommerce Class.
  *
  * @class WooCommerce
- * @property WC_Cart $cart Cart class.
- * @property WC_Customer $customer Customer class.
- * @property WC_Integrations $integrations Integrations class.
- * @property WC_Order_Factory $order_factory Order factory class.
- * @property WC_Product_Factory $product_factory Product factory class.
- * @property WC_Query $query Query class.
- * @property WC_Session|WC_Session_Handler $session Session class.
- * @property WC_Structured_Data $structured_data Structured data class.
- * @property WC_Countries $countries Countries class.
- * @property WC_API $api API class.
- * @property WC_Deprecated_Hooks[] $deprecated_hook_handlers Array of deprecated hook handlers.
+ *
  * @property WC_Payment_Gateways $payment_gateways
+ * @property WC_Shipping         $shipping
+ * @property WC_Mailer           $mailer
+ * @property WC_Checkout         $checkout
+ * @property WC_Shortcodes       $shortcodes
+ * @property WC_Emails           $emails
+ * @property WC_Cart             $cart
+ * @property WC_Customer         $customer
+ * @property WC_Product_Factory  $product_factory
+ * @property WC_Order_Factory    $order_factory
+ * @property WC_Structured_Data  $structured_data
+ * @property WC_Query            $query
+ * @property WC_Countries        $countries
+ * @property WC_Integrations     $integrations
+ * @property WC_Session|WC_Session_Handler $session
+ * @property WC_API              $api
+ * @property WC_Admin            $admin
+ * @property WC_Admin_Menus      $admin_menus
+ * @property WC_Admin_Permissions $admin_permissions
+ * @property WC_Admin_Post_Types $admin_post_types
+ * @property WC_Admin_Reports    $admin_reports
+ * @property WC_Admin_Settings   $admin_settings
+ * @property WC_Admin_Status     $admin_status
+ * @property WC_Admin_Taxonomies $admin_taxonomies
+ * @property WC_Admin_Webhooks   $admin_webhooks
+ * @property WC_Admin_Notices    $admin_notices
+ * @property WC_Admin_Install    $admin_install
  */
 final class WooCommerce {
 
