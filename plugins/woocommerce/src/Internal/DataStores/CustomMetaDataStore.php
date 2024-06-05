@@ -53,7 +53,7 @@ abstract class CustomMetaDataStore {
 	/**
 	 * Returns an array of meta for an object.
 	 *
-	 * @param  WC_Data $object WC_Data object.
+	 * @param  \WC_Data $object WC_Data object.
 	 * @return array
 	 */
 	public function read_meta( &$object ) {
@@ -97,8 +97,8 @@ abstract class CustomMetaDataStore {
 	/**
 	 * Add new piece of meta.
 	 *
-	 * @param  WC_Data  $object WC_Data object.
-	 * @param  stdClass $meta (containing ->key and ->value).
+	 * @param  \WC_Data  $object WC_Data object.
+	 * @param  \stdClass $meta (containing ->key and ->value).
 	 *
 	 * @return int|false meta ID
 	 */
@@ -128,8 +128,8 @@ abstract class CustomMetaDataStore {
 	/**
 	 * Update meta.
 	 *
-	 * @param  WC_Data  $object WC_Data object.
-	 * @param  stdClass $meta (containing ->id, ->key and ->value).
+	 * @param  \WC_Data  $object WC_Data object.
+	 * @param  \stdClass $meta (containing ->id, ->key and ->value).
 	 *
 	 * @return bool
 	 */
