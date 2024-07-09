@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { Locator, Page } from '@playwright/test';
-import { Editor, Admin, expect } from '@woocommerce/e2e-utils';
+import { Editor, Admin } from '@woocommerce/e2e-utils';
 import { BlockRepresentation } from '@wordpress/e2e-test-utils-playwright/build-types/editor/insert-block';
 
 /**
@@ -59,15 +59,19 @@ export const SELECTORS = {
 		min: 'MIN',
 		max: 'MAX',
 	},
+	previewButtonTestID: 'product-collection-preview-button',
 };
 
-type Collections =
+export type Collections =
 	| 'newArrivals'
 	| 'topRated'
 	| 'bestSellers'
 	| 'onSale'
 	| 'featured'
-	| 'productCatalog';
+	| 'productCatalog'
+	| 'myCustomCollection'
+	| 'myCustomCollectionWithPreview'
+	| 'myCustomCollectionWithAdvancedPreview';
 
 const collectionToButtonNameMap = {
 	newArrivals: 'New Arrivals Recommend your newest products.',
@@ -77,6 +81,11 @@ const collectionToButtonNameMap = {
 	featured: 'Featured Showcase your featured products.',
 	productCatalog:
 		'Product Catalog Display all products in your catalog. Results can (change to) match the current template, page, or search term.',
+	myCustomCollection: 'My Custom Collection This is a custom collection.',
+	myCustomCollectionWithPreview:
+		'My Custom Collection with Preview This is a custom collection with preview.',
+	myCustomCollectionWithAdvancedPreview:
+		'My Custom Collection with Advanced Preview This is a custom collection with advanced preview.',
 };
 
 class ProductCollectionPage {
@@ -194,25 +203,23 @@ class ProductCollectionPage {
 		);
 	}
 
-	async replaceProductsWithProductCollectionInTemplate(
-		template: string,
-		collection?: Collections
+	// Going to Product Catalog by default
+	async goToEditorTemplate(
+		template = 'woocommerce/woocommerce//archive-product'
 	) {
 		await this.admin.visitSiteEditor( {
 			postId: template,
 			postType: 'wp_template',
+			canvas: 'edit',
 		} );
-
-		await this.editor.enterEditMode();
-
-		await expect(
-			this.editor.canvas.locator( `[data-type="core/query"]` )
-		).toBeVisible();
-
-		await this.replaceBlockByBlockName( 'core/query', this.BLOCK_SLUG );
-		await this.chooseCollectionInTemplate( collection );
 		await this.refreshLocators( 'editor' );
-		await this.editor.saveSiteEditorEntities();
+	}
+
+	async goToProductCatalogAndInsertCollection( collection: Collections ) {
+		await this.goToTemplateAndInsertCollection(
+			'woocommerce/woocommerce//archive-product',
+			collection
+		);
 	}
 
 	async goToProductCatalogFrontend() {
@@ -236,8 +243,8 @@ class ProductCollectionPage {
 		await this.admin.visitSiteEditor( {
 			postId: template,
 			postType: 'wp_template',
+			canvas: 'edit',
 		} );
-		await this.editor.enterEditMode();
 		await this.editor.canvas.locator( 'body' ).click();
 		await this.insertProductCollection();
 		await this.chooseCollectionInTemplate( collection );
@@ -247,13 +254,6 @@ class ProductCollectionPage {
 	async goToHomePageAndInsertCollection( collection?: Collections ) {
 		await this.goToTemplateAndInsertCollection(
 			`${ BLOCK_THEME_SLUG }//home`,
-			collection
-		);
-	}
-
-	async goToProductCatalogAndInsertCollection( collection?: Collections ) {
-		await this.goToTemplateAndInsertCollection(
-			'woocommerce/woocommerce//archive-product',
 			collection
 		);
 	}
@@ -432,7 +432,7 @@ class ProductCollectionPage {
 
 		// Add new values.
 		for ( const name of filterValue ) {
-			await input.fill( name );
+			await input.pressSequentially( name );
 			await sidebarSettings
 				.getByRole( 'option', { name } )
 				.getByText( name )
@@ -450,13 +450,24 @@ class ProductCollectionPage {
 		await this.refreshLocators( 'editor' );
 	}
 
+	async focusProductCollection() {
+		const editorSelector = this.editor.canvas
+			.getByLabel( 'Block: Product Collection', { exact: true } )
+			.first();
+
+		const postSelector = this.page
+			.getByLabel( 'Block: Product Collection', { exact: true } )
+			.first();
+
+		await Promise.any( [
+			this.editor.selectBlocks( editorSelector ),
+			this.editor.selectBlocks( postSelector ),
+		] );
+	}
+
 	async clickDisplaySettings() {
 		// Select the block, so that toolbar is visible.
-		const block = this.page
-			.locator( `[data-type="${ this.BLOCK_SLUG }"]` )
-			.first();
-		await this.editor.selectBlocks( block );
-
+		await this.focusProductCollection();
 		// Open the display settings.
 		await this.page
 			.getByRole( 'button', { name: 'Display settings' } )
@@ -604,6 +615,11 @@ class ProductCollectionPage {
 
 	async getCollectionHeading() {
 		return this.page.getByRole( 'heading' );
+	}
+
+	async getProductNames() {
+		const products = this.page.locator( '.wp-block-post-title' );
+		return products.allTextContents();
 	}
 
 	/**
